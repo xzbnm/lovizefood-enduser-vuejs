@@ -32,7 +32,7 @@
             <path d="M10.5 18.5h3" />
           </svg>
         </div>
-        <h2 class="auth-head__title">ورود به لاویز</h2>
+        <h2 class="auth-head__title">برای ثبت سفارش</h2>
         <p class="auth-head__sub">شماره موبایل خود را وارد کنید تا کد تایید برایتان ارسال شود.</p>
       </div>
 
@@ -61,7 +61,8 @@
         </span>
       </label>
 
-      <button type="submit" class="auth-submit" :disabled="busy">
+      <!-- Off until the number is a valid Iranian mobile, so the first tap can't be wasted. -->
+      <button type="submit" class="auth-submit" :disabled="busy || !mobileValid">
         <span v-if="!busy">دریافت کد تایید</span>
         <span v-else class="auth-spinner" aria-label="در حال ارسال"></span>
       </button>
@@ -259,7 +260,7 @@
 </template>
 
 <script>
-import { normalizeMobileIran } from '~/utils/mobile';
+import { normalizeMobileIran, isValidMobileIran } from '~/utils/mobile';
 
 /** Cooldown before another OTP request or changing the phone number. */
 const RESEND_SECONDS = 120;
@@ -497,6 +498,9 @@ export default {
   },
   emits: ['onRegister', 'onLogin'],
   computed: {
+    mobileValid() {
+      return isValidMobileIran(this.loginForm.data.mobile);
+    },
     /** m:ss, in Persian digits. */
     resendLabel() {
       const m = Math.floor(this.resendIn / 60);
@@ -533,22 +537,7 @@ export default {
 /* Unscoped on purpose: bootstrap-vue renders the dialog outside this
    component's tree, so scoped styles never reach .modal-dialog. */
 
-/* ---- shell: bottom sheet on phones, centred card above ---- */
-.auth-modal .auth-modal__dialog {
-  margin: 0;
-  max-width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-.auth-modal .auth-modal__content {
-  border: 0;
-  border-radius: var(--lz-radius-card) var(--lz-radius-card) 0 0;
-  background: var(--lz-surface);
-  box-shadow: var(--lz-shadow-float);
-}
+/* ---- shell: the bottom-sheet placement comes from main.scss ---- */
 
 .auth-modal .auth-modal__body {
   padding: var(--lz-space-2) var(--lz-space-4)
@@ -556,28 +545,10 @@ export default {
   position: relative;
 }
 
-@media (min-width: 576px) {
-  .auth-modal .auth-modal__dialog {
-    position: relative;
-    max-width: 420px;
-    margin: 1.75rem auto;
-  }
-  .auth-modal .auth-modal__content {
-    border-radius: var(--lz-radius-card);
-  }
-}
-
 .auth-sheet__grip {
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--lz-border);
-  margin: var(--lz-space-1) auto var(--lz-space-3);
+  display: none;
 }
 
-@media (min-width: 576px) {
-  .auth-sheet__grip { display: none; }
-}
 
 .auth-sheet__close {
   position: absolute;
@@ -677,7 +648,7 @@ export default {
   width: 100%;
   height: 52px;
   padding: 0 var(--lz-space-4);
-  border: 1px solid var(--lz-border);
+  border: 1px solid var(--lz-border-strong);
   border-radius: var(--lz-radius-control);
   background: var(--lz-surface);
   font-family: inherit;
@@ -736,7 +707,7 @@ export default {
   padding: var(--lz-space-3) var(--lz-space-4);
   border: 1px dashed var(--lz-warning);
   border-radius: var(--lz-radius-control);
-  background: #fff8ec;
+  background: var(--lz-saffron-wash);
 }
 
 .auth-devcode__label {
@@ -769,7 +740,7 @@ export default {
   justify-content: center;
   gap: 7px;
   padding: 8px 12px;
-  border: 1px solid var(--lz-border);
+  border: 1px solid var(--lz-border-strong);
   border-radius: 999px;
   background: var(--lz-surface-light);
   color: var(--lz-ink-muted);
@@ -805,7 +776,7 @@ export default {
   border: 0;
   border-radius: var(--lz-radius-chip);
   background: var(--lz-accent);
-  color: var(--lz-ink-inverse);
+  color: var(--lz-on-accent);
   font-family: inherit;
   font-size: var(--lz-text-lg);
   font-weight: var(--lz-weight-semibold);
@@ -816,7 +787,9 @@ export default {
   box-shadow: var(--lz-shadow-accent);
 }
 
-.auth-submit:disabled { opacity: 0.7; cursor: default; }
+.auth-submit { transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease; }
+.auth-submit:active:not(:disabled) { transform: scale(0.98); }
+.auth-submit:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 
 .auth-spinner {
   width: 20px;

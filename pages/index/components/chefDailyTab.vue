@@ -1,7 +1,7 @@
 <template>
   <section class="chef-daily">
     <header class="chef-daily__header">
-      <h2 class="chef-daily__title">غذای روز سرآشپز</h2>
+      <h2 class="chef-daily__title section-heading">غذای روز سرآشپز</h2>
       <p class="chef-daily__hint">
         امروز {{ todayName }} است — غذاهای روزهای آینده را هم می‌توانید پیش‌سفارش کنید؛ تاریخ تحویل را در سبد انتخاب کنید.
       </p>
@@ -38,6 +38,8 @@
             :isOutOfStock="productData[product.key].isOutOfStock"
             :unit_name="productData[product.key].unit_name"
             :image="productData[product.key].image"
+                      :fullImage="productData[product.key].imageFull || ''"
+                      :hasPhoto="!!productData[product.key].imageFull"
             :description="productData[product.key].description"
             :isSpecial="productData[product.key].isSpecial"
             @decrease="$emit('decrease', product.key)"
@@ -88,13 +90,7 @@ export default {
 
 .chef-daily__header {
   margin-bottom: 0.85rem;
-}
-
-.chef-daily__title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin: 0 0 0.25rem;
-  color: var(--laviz-text);
+  text-align: center;
 }
 
 .chef-daily__hint {
@@ -130,8 +126,8 @@ export default {
 .chef-daily__day-badge {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #fff;
-  background: var(--laviz-primary);
+  color: var(--lz-saffron-ink);
+  background: var(--lz-saffron);
   border-radius: 999px;
   padding: 0.15rem 0.6rem;
 }

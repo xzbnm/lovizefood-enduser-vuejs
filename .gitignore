@@ -88,3 +88,7 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# dev-mock generated
+dev-mock/.preview-shim.js
+dev-mock/preview-dist/

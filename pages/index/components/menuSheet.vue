@@ -70,7 +70,7 @@ export default {
   position: fixed;
   inset: 0;
   z-index: 1035; /* below bootstrap-vue's modal layer (1040/1050) */
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--lz-modal-backdrop);
   display: flex;
   align-items: flex-end;
 }
@@ -79,8 +79,11 @@ export default {
   width: 100%;
   max-height: 78vh;
   overflow-y: auto;
-  background: var(--laviz-surface);
-  border-radius: 16px 16px 0 0;
+  background: var(--lz-surface-raised);
+  border: 1px solid var(--lz-sheet-border);
+  border-bottom: 0;
+  box-shadow: var(--lz-shadow-sheet);
+  border-radius: 24px 24px 0 0;
   padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
 }
 

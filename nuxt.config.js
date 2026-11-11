@@ -44,7 +44,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    "@/assets/fonts/yekanBakh/FaNum/index.css",
+    "@/assets/fonts/iran-sans-x/index.css",
     "@/assets/scss/main.scss"
   ],
 

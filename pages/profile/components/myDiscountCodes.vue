@@ -239,7 +239,7 @@ export default {
 }
 
 .code-card__badge--urgent {
-  background: #fff0ee;
+  background: var(--lz-danger-wash);
   color: var(--laviz-danger);
 }
 

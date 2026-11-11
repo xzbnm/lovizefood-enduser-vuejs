@@ -8,8 +8,8 @@
     <div v-if="visible" class="continue-bar">
       <div class="continue-bar__inner">
         <div class="continue-bar__summary">
-          <span class="continue-bar__count">{{ itemCount }} قلم</span>
-          <strong class="continue-bar__total">{{ formatNum(total) }} تومان</strong>
+          <span :key="itemCount" class="continue-bar__count">{{ itemCount }} قلم</span>
+          <strong :key="total" class="continue-bar__total">{{ formatNum(total) }} تومان</strong>
         </div>
         <button
           type="button"
@@ -59,7 +59,7 @@ export default {
   right: 0;
   left: 0;
   z-index: 1030;
-  background: #fff;
+  background: var(--lz-surface);
   border-top: 1px solid var(--laviz-border-light, #f6f6f6);
   box-shadow: 0 -0.25rem 1rem 0 rgba(0, 0, 0, 0.12);
   padding: 0.6rem 0.9rem calc(0.6rem + env(safe-area-inset-bottom));
@@ -118,5 +118,52 @@ export default {
 .continue-bar-leave-to {
   transform: translateY(100%);
   opacity: 0;
+}
+
+/* Motion: the bar springs up, the total and count tick when they change, and a
+   light sweep crosses the button each time the basket changes. */
+.continue-bar-enter-active {
+  transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.22s ease;
+}
+
+.continue-bar__total,
+.continue-bar__count {
+  display: inline-block;
+  animation: bar-tick 0.34s ease;
+}
+
+.continue-bar__action {
+  position: relative;
+  overflow: hidden;
+  transition: opacity 0.15s, transform 0.12s ease;
+}
+
+.continue-bar__action:active {
+  transform: scale(0.97);
+}
+
+.continue-bar__action::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.38) 50%, transparent 70%);
+  transform: translateX(120%);
+  animation: bar-sheen 0.9s ease 0.15s;
+  pointer-events: none;
+}
+
+@keyframes bar-tick {
+  0% { transform: translateY(5px); opacity: 0.2; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bar-sheen {
+  to { transform: translateX(-120%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .continue-bar__total,
+  .continue-bar__count,
+  .continue-bar__action::after { animation: none; }
 }
 </style>

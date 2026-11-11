@@ -24,7 +24,7 @@ body {
   max-width: 720px;
   min-height: 100vh;
   margin: 0 auto;
-  background: #fff;
+  background: var(--lz-surface);
 }
 
 .laviz-storefront-shell > .b-overlay-wrap {
@@ -39,7 +39,7 @@ body {
 
 @media (min-width: 768px) {
   body {
-    background: #eceef0;
+    background: var(--lz-outer);
     overflow-x: hidden;
   }
 
@@ -70,9 +70,19 @@ body {
   margin-left: -7px !important;
 }
 
+/* Scrolling stays, scrollbars go: the page, the header and every sheet still
+   scroll by touch, wheel and keyboard, but no bar is drawn. */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 /* Header */
 .laviz-app-header {
-  background: linear-gradient(165deg, #fff9f0 0%, #fff 45%, #faf6ee 100%);
+  background: linear-gradient(165deg, var(--lz-header-start) 0%, var(--lz-surface) 45%, var(--lz-header-end) 100%);
   border-bottom: 1px solid var(--laviz-border);
   box-shadow: var(--laviz-shadow-sm);
 }
@@ -126,6 +136,110 @@ body {
   }
 }
 
+// Filled primary button for the logged-out state (was a text link).
+.laviz-user-bar__login {
+  border: 0;
+  border-radius: var(--laviz-radius-sm);
+  padding: 0.4rem 1.25rem;
+  min-height: 44px;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--laviz-primary);
+  cursor: pointer;
+
+  &:focus-visible {
+    background: var(--laviz-primary-dark);
+  }
+}
+
+// Single-row header: brand on the start side, actions on the end side.
+.laviz-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 88px;
+  padding: 0.5rem 0;
+}
+
+.laviz-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.laviz-topbar__logo {
+  height: 60px;
+  width: auto;
+  flex: none;
+}
+
+.laviz-topbar__title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--laviz-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// The header slides up by changing `top` (set inline from index.vue), so the
+// space it reserves is unchanged and the page content never jumps.
+.main-fixed-header {
+  transition: top 0.22s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-fixed-header {
+    transition: none;
+  }
+}
+
+.laviz-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+}
+
+// Icon-only action; 44px keeps it comfortably tappable.
+.laviz-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--laviz-border);
+  border-radius: var(--laviz-radius-sm);
+  background: var(--laviz-surface);
+  color: var(--laviz-primary);
+  cursor: pointer;
+
+  &:focus-visible {
+    border-color: var(--laviz-primary);
+  }
+}
+
+.laviz-topbar__logout {
+  border: 0;
+  background: transparent;
+  color: var(--laviz-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0 0.25rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.laviz-topbar__ramadan {
+  text-align: center;
+  padding-bottom: 0.4rem;
+}
+
 .laviz-status-card {
   display: flex;
   flex-direction: column;
@@ -133,7 +247,7 @@ body {
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   margin-bottom: 0.75rem;
-  background: linear-gradient(90deg, #eef6f1 0%, #f8fdf9 100%);
+  background: var(--lz-success-wash);
   border: 1px solid rgba(45, 106, 79, 0.2);
   border-radius: var(--laviz-radius-sm);
   font-size: 0.88rem;
@@ -149,7 +263,7 @@ body {
 }
 
 .laviz-weekly-plan {
-  background: linear-gradient(165deg, #fff9f0, #fff);
+  background: linear-gradient(165deg, var(--lz-header-start), var(--lz-surface));
   border: 1px solid rgba(193, 127, 36, 0.28);
   border-radius: var(--laviz-radius);
   box-shadow: var(--laviz-shadow-sm);
@@ -182,7 +296,7 @@ body {
   border: 1px solid var(--laviz-border);
   border-radius: var(--laviz-radius-sm);
   overflow: hidden;
-  background: #fff;
+  background: var(--lz-surface);
 }
 
 .laviz-weekly-plan__table-head,
@@ -197,7 +311,7 @@ body {
 }
 
 .laviz-weekly-plan__table-head {
-  background: #f7f3eb;
+  background: var(--lz-surface-light);
   font-size: 0.78rem;
   font-weight: 800;
   color: var(--laviz-primary-dark);
@@ -213,7 +327,7 @@ body {
   }
 
   &:nth-child(even) {
-    background: #fafafa;
+    background: var(--lz-surface-light);
   }
 }
 
@@ -255,7 +369,7 @@ body {
   max-width: 100%;
   font-size: 0.8rem;
   line-height: 1.45;
-  background: #fff;
+  background: var(--lz-surface);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 999px;
   padding: 0.25rem 0.55rem;
@@ -418,7 +532,7 @@ body {
   margin: 0;
   border-radius: var(--laviz-radius-sm);
   border: 1px solid var(--laviz-border);
-  background: #fafafa;
+  background: var(--lz-surface-light);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 
@@ -465,7 +579,7 @@ body {
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--laviz-border);
   border-radius: var(--laviz-radius-sm);
-  background: #fafafa;
+  background: var(--lz-surface-light);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 
@@ -506,7 +620,7 @@ body {
   margin-bottom: 0.5rem;
   border-radius: var(--laviz-radius-sm);
   border: 1px solid var(--laviz-border);
-  background: #fafafa;
+  background: var(--lz-surface-light);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 
@@ -589,7 +703,7 @@ body {
   min-height: 2.35rem;
   border: 1px solid var(--laviz-border);
   border-radius: var(--laviz-radius-sm);
-  background: #fafafa;
+  background: var(--lz-surface-light);
   padding: 0.45rem 0.35rem;
   font-size: 0.85rem;
   font-weight: 700;
@@ -667,7 +781,7 @@ body {
 
 .laviz-checkout-summary__items {
   border-bottom: 1px dashed var(--laviz-border);
-  background: #fafafa;
+  background: var(--lz-surface-light);
 }
 
 .laviz-checkout-summary__item {
@@ -842,7 +956,7 @@ body {
   justify-content: center;
   position: relative;
   padding: 1rem 3rem;
-  background: linear-gradient(165deg, #fff9f0, #fff);
+  background: linear-gradient(165deg, var(--lz-header-start), var(--lz-surface));
   border-bottom: 1px solid var(--laviz-border);
 }
 
@@ -944,7 +1058,7 @@ body {
   }
 
   &--used {
-    background: #e9ecef;
+    background: var(--lz-surface-soft);
     color: #495057;
   }
 }
@@ -955,7 +1069,7 @@ body {
 }
 
 .laviz-order-history-card {
-  background: #fff;
+  background: var(--lz-surface);
 }
 
 .laviz-address-list {
@@ -969,8 +1083,8 @@ body {
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
-  background: #fff;
-  border: 1px solid #e6e9e7;
+  background: var(--lz-surface);
+  border: 1px solid var(--lz-border-hairline);
   border-radius: var(--laviz-radius-sm);
   padding: 0.75rem 0.9rem;
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
@@ -1014,8 +1128,8 @@ body {
 }
 
 .laviz-address-form {
-  background: #f8faf9;
-  border: 1px solid #e6e9e7;
+  background: var(--lz-surface-light);
+  border: 1px solid var(--lz-border-hairline);
   border-radius: var(--laviz-radius-sm);
   padding: 1rem;
 
@@ -1027,7 +1141,7 @@ body {
 }
 
 .laviz-order-history-items {
-  background: #f8faf9;
+  background: var(--lz-surface-light);
   border-radius: var(--laviz-radius-sm);
   padding: 0.5rem 0.75rem;
 }
@@ -1122,7 +1236,6 @@ body {
   display: none;
 }
 
-@import "./pwa-call-out";
 
 
 /* Menu sections (continuous scroll layout) ---------------------------------
@@ -1234,6 +1347,46 @@ body {
   padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
 }
 
+/* "خرید شما" row: the title on one side, an "add more" action on the other.
+   The dashed rule moves from the title to the row so it runs under both. */
+.laviz-cart-items__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px dashed var(--laviz-border);
+}
+
+.laviz-cart-items__head .laviz-section__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.laviz-cart-items__add {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--laviz-primary);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--laviz-primary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.2s ease;
+}
+
+.laviz-cart-items__add:active {
+  transform: scale(0.95);
+  background: var(--laviz-primary-light);
+}
+
 .laviz-cart-items__empty {
   color: var(--laviz-muted);
   font-size: 14px;
@@ -1266,30 +1419,49 @@ body {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 30px;
-  padding: 0 10px;
-  border-radius: 6px;
-  background: var(--laviz-add-bg, #ffedf6);
-  color: var(--laviz-add-ink, #bc0060);
+  gap: 0;
+  height: 44px;
+  padding: 0;
+  border-radius: 12px;
+  background: var(--laviz-add-bg);
+  color: var(--laviz-add-ink);
   font-weight: 600;
 }
 
+/* Touch targets: each button is a full 44x44 area, the pill is as tall. */
 .laviz-cart-line__stepper button {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 16px;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
+  touch-action: manipulation; /* no double-tap zoom delay on rapid taps */
+  -webkit-tap-highlight-color: transparent;
 }
 
+.laviz-cart-line__count {
+  display: block;
+  flex: none;
+  width: 32px; /* fixed: one digit or three, the buttons stay put */
+  text-align: center;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The price sits under the name, so its width can never push the stepper. */
 .laviz-cart-line__price {
-  flex: 0 0 auto;
+  display: block;
+  margin-top: 2px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--laviz-text);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 /* A flex sibling of the scroller rather than a sticky child, so it sits flush
@@ -1505,16 +1677,6 @@ body {
   background: var(--lz-canvas);
 }
 
-.laviz-delivery-description {
-  padding: 0.65rem 0.8rem;
-  border-right: 3px solid var(--laviz-primary);
-  border-radius: var(--laviz-radius-sm);
-  background: var(--laviz-primary-light);
-  color: var(--laviz-text);
-  font-size: 0.86rem;
-  line-height: 1.9;
-}
-
 /* Keep the entire desktop storefront inside the phone-width canvas. The
    viewport bleed is useful on narrow screens, but would stretch discounts and
    menu sections across a wide monitor. */
@@ -1542,3 +1704,1058 @@ body {
   }
 
 }
+
+/* Section headings (menu categories, chef's daily): centred, flanked by a line
+   that fades outward and ends in a dot beside the text. Lines are drawn with
+   gradients, so they follow the theme colour and need no extra markup. */
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.6;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--laviz-text);
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1 1 0;
+    min-width: 1.5rem;
+    height: 8px;
+    opacity: 0.6;
+  }
+
+  // The element on the right (first in RTL) fades towards the right edge.
+  &::before {
+    background:
+      radial-gradient(circle at 3.5px 50%, var(--laviz-primary) 0 3px, transparent 3.5px),
+      linear-gradient(to left, transparent, var(--laviz-primary)) 0 50% / 100% 1px no-repeat;
+  }
+
+  &::after {
+    background:
+      radial-gradient(circle at calc(100% - 3.5px) 50%, var(--laviz-primary) 0 3px, transparent 3.5px),
+      linear-gradient(to right, transparent, var(--laviz-primary)) 0 50% / 100% 1px no-repeat;
+  }
+}
+
+/* Strips that can be dragged with a mouse (see utils/dragScroll.js). */
+.drag-scroll {
+  cursor: grab;
+}
+
+.drag-scroll--dragging {
+  cursor: grabbing;
+  user-select: none;
+  scroll-behavior: auto;
+}
+
+/* Delivery address: plaque field and the "set position on map" button. */
+.laviz-map-hint {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--laviz-muted);
+}
+
+.laviz-map-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: var(--laviz-radius-sm);
+  background: var(--laviz-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--laviz-primary);
+    outline-offset: 2px;
+  }
+}
+
+
+.laviz-map-done {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  color: var(--laviz-success);
+}
+
+/* Delivery day: three equal buttons (امروز / فردا / پس‌فردا). */
+.laviz-day-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.laviz-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 0.4rem 0.25rem;
+  border: 1px solid var(--laviz-border);
+  border-radius: var(--laviz-radius-sm);
+  background: var(--laviz-surface);
+  color: var(--laviz-text);
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  text-align: center;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--laviz-primary);
+    outline-offset: 2px;
+  }
+}
+
+.laviz-day__label {
+  text-wrap: balance;
+}
+
+.laviz-day--active {
+  border-color: var(--laviz-primary);
+  background: var(--laviz-primary-light);
+  color: var(--laviz-primary-dark);
+  font-weight: 700;
+}
+
+.laviz-day--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.laviz-day__note {
+  font-size: 0.72rem;
+  color: var(--laviz-muted);
+}
+
+.laviz-day__note--discount {
+  color: var(--laviz-success);
+}
+
+.laviz-day-switch--two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Label and field on a single line (short fields such as the plaque). */
+.laviz-inline-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.laviz-inline-field__label {
+  flex: none;
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.laviz-inline-field__hint {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--laviz-muted);
+}
+
+.laviz-inline-field .form-control {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The navigate arrow is turned 45 degrees to the left. */
+.laviz-icon-btn__arrow {
+  transform: rotate(-45deg);
+}
+
+/* =============================================================================
+   Motion
+   Mobile-first and touch-driven: entrances, press feedback and state changes.
+   Nothing depends on hover. Every animation below is switched off by the
+   reduced-motion rule at the end.
+   ============================================================================= */
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.82) rotate(-4deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes sheet-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes draw-line {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes shimmer {
+  from { background-position: 160% 0; }
+  to { background-position: -60% 0; }
+}
+
+/* Header: the logo pops in, the two actions follow it. */
+.laviz-topbar__logo {
+  animation: pop-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+
+.laviz-topbar__title {
+  animation: rise-in 0.45s ease 0.12s both;
+}
+
+.laviz-topbar__actions > * {
+  animation: rise-in 0.4s ease both;
+}
+
+.laviz-topbar__actions > :nth-child(1) { animation-delay: 0.18s; }
+.laviz-topbar__actions > :nth-child(2) { animation-delay: 0.26s; }
+.laviz-topbar__actions > :nth-child(3) { animation-delay: 0.34s; }
+
+/* Menu rows and headings arrive as they scroll into view (see utils/reveal.js). */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.reveal--in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* The lines beside a heading draw outwards from the title. */
+.section-heading.reveal--in::before,
+.section-heading.reveal--in::after {
+  animation: draw-line 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+}
+
+.section-heading.reveal--in::before { transform-origin: left center; }
+.section-heading.reveal--in::after { transform-origin: right center; }
+
+/* First load: placeholders in the shape of the menu, with a light sweep. */
+.skeleton-menu {
+  padding: var(--lz-space-4);
+}
+
+.skeleton-title,
+.skeleton-item__img,
+.skeleton-item__lines span {
+  border-radius: var(--lz-radius-control);
+  background: linear-gradient(100deg, var(--lz-surface-soft) 30%, var(--lz-surface-light) 50%, var(--lz-surface-soft) 70%);
+  background-size: 220% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.skeleton-title {
+  width: 40%;
+  height: 22px;
+  margin: 8px auto 20px;
+}
+
+.skeleton-item {
+  display: flex;
+  gap: var(--lz-space-4);
+  padding: var(--lz-space-3) 0;
+  border-bottom: 1px solid var(--lz-border-hairline);
+}
+
+.skeleton-item__img {
+  flex: none;
+  width: 104px;
+  height: 104px;
+  border-radius: var(--lz-radius-media);
+}
+
+.skeleton-item__lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.skeleton-item__lines span {
+  display: block;
+  height: 14px;
+}
+
+.skeleton-item__lines span:nth-child(1) { width: 70%; height: 18px; }
+.skeleton-item__lines span:nth-child(2) { width: 95%; }
+.skeleton-item__lines span:nth-child(3) { width: 45%; }
+
+/* The basket slides up and its sections follow one after another. */
+.laviz-cart-modal {
+  animation: sheet-up 0.32s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.laviz-cart-modal__scroll .laviz-section {
+  animation: rise-in 0.42s ease both;
+}
+
+.laviz-cart-modal__scroll .laviz-section:nth-of-type(1) { animation-delay: 0.08s; }
+.laviz-cart-modal__scroll .laviz-section:nth-of-type(2) { animation-delay: 0.16s; }
+.laviz-cart-modal__scroll .laviz-section:nth-of-type(3) { animation-delay: 0.24s; }
+.laviz-cart-modal__scroll .laviz-section:nth-of-type(4) { animation-delay: 0.32s; }
+
+/* Choices respond smoothly and give under the finger. */
+.laviz-day,
+.laviz-time-slot,
+.laviz-choice,
+.laviz-saved-address,
+.laviz-map-trigger,
+.laviz-icon-btn,
+.laviz-user-bar__login,
+.menu-nav__action {
+  transition: transform 0.12s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.laviz-day:active,
+.laviz-time-slot:active,
+.laviz-choice:active,
+.laviz-saved-address:active,
+.laviz-map-trigger:active,
+.laviz-icon-btn:active,
+.laviz-user-bar__login:active,
+.menu-nav__action:active {
+  transform: scale(0.95);
+}
+
+.laviz-day--active,
+.laviz-time-slot--active {
+  animation: pop-in 0.26s ease both;
+}
+
+/* The dot that flies from an add button to the basket (utils/motion.js). */
+.fly-dot {
+  position: fixed;
+  z-index: 3500;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--lz-accent);
+  box-shadow: 0 0 0 3px var(--lz-accent-wash), 0 4px 10px var(--lz-accent-halo);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laviz-topbar__logo,
+  .laviz-topbar__title,
+  .laviz-topbar__actions > *,
+  .laviz-cart-modal,
+  .laviz-cart-modal__scroll .laviz-section,
+  .laviz-day--active,
+  .laviz-time-slot--active,
+  .section-heading.reveal--in::before,
+  .section-heading.reveal--in::after {
+    animation: none;
+  }
+
+  .reveal,
+  .reveal--in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .skeleton-title,
+  .skeleton-item__img,
+  .skeleton-item__lines span {
+    animation: none;
+  }
+}
+
+/* =============================================================================
+   Theme support
+   ============================================================================= */
+
+/* The new logo has a light and a dark variant; the matching one is shown. */
+.laviz-topbar__logo { height: 64px; }
+.laviz-topbar__logo--dark { display: none; }
+html[data-theme='dark'] .laviz-topbar__logo--light { display: none; }
+html[data-theme='dark'] .laviz-topbar__logo--dark { display: block; }
+
+/* Switching theme: the new theme grows from the toggle over a snapshot of the
+   old one (View Transitions, see toggleTheme in pages/index.vue). The default
+   cross-fade is turned off so the circle is the only motion. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* The sun/moon spins in when it changes. */
+.laviz-icon-btn__theme {
+  animation: theme-icon-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+@keyframes theme-icon-in {
+  from { opacity: 0; transform: rotate(-120deg) scale(0.5); }
+  to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laviz-icon-btn__theme { animation: none; }
+}
+
+/* Bootstrap pieces take their colours from the theme tokens. */
+.form-control,
+.custom-select {
+  background-color: var(--lz-surface);
+  color: var(--lz-ink);
+  border-color: var(--lz-border);
+}
+
+.form-control::placeholder {
+  color: var(--lz-ink-faint);
+}
+
+.form-control:focus,
+.custom-select:focus {
+  background-color: var(--lz-surface);
+  color: var(--lz-ink);
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: var(--lz-surface-soft);
+}
+
+.modal-content,
+.toast,
+.popover,
+.dropdown-menu {
+  background-color: var(--lz-surface);
+  color: var(--lz-ink);
+}
+
+.modal-header,
+.modal-footer,
+.border-top,
+.border-bottom {
+  border-color: var(--lz-border-hairline) !important;
+}
+
+.close {
+  color: var(--lz-ink);
+  text-shadow: none;
+}
+
+.text-muted {
+  color: var(--lz-ink-muted) !important;
+}
+
+/* Ramadan's green header wash, dark version. */
+html[data-theme='dark'] .laviz-app--ramadan .laviz-app-header {
+  background: linear-gradient(165deg, #12281d 0%, var(--lz-surface) 45%, #0f1f17 100%);
+  border-bottom-color: rgba(46, 154, 109, 0.25);
+}
+
+/* Map tiles are light; invert them for the dark theme (markers are unaffected). */
+html[data-theme='dark'] .mpm__map .leaflet-tile-pane,
+html[data-theme='dark'] .map-picker__map .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.88) contrast(0.92);
+}
+
+/* =============================================================================
+   Modals are bottom sheets
+   Every bootstrap-vue modal (login, register, bill, profile, review, address)
+   is pinned to the bottom of the screen and slides up. The sheet has its own
+   raised surface and a visible edge so it separates from the dimmed page, most
+   of all in the dark theme.
+   ============================================================================= */
+.modal .modal-dialog {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  min-height: 0;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.modal .modal-dialog-centered::before {
+  display: none;
+}
+
+.modal.fade .modal-dialog {
+  transform: translateY(100%);
+  transition: transform 0.34s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.modal.show .modal-dialog {
+  transform: translateY(0);
+}
+
+.modal .modal-dialog .modal-content {
+  position: relative;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  pointer-events: auto;
+  background: var(--lz-surface-raised);
+  color: var(--lz-ink);
+  border: 1px solid var(--lz-sheet-border);
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  box-shadow: var(--lz-shadow-sheet);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* A small handle on top says "this slides". */
+.modal .modal-dialog .modal-content::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 8px auto 0;
+  border-radius: 2px;
+  background: var(--lz-border-strong);
+}
+
+.modal-backdrop {
+  background-color: #000;
+}
+
+.modal-backdrop.show {
+  opacity: var(--lz-backdrop-opacity);
+}
+
+/* Fields keep a clearly visible outline, on the raised surface especially. */
+.form-control,
+.custom-select {
+  border-color: var(--lz-border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal.fade .modal-dialog { transition: none; }
+}
+
+/* Leaflet's own white controls and popups follow the theme. */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--lz-surface-raised);
+  color: var(--lz-ink);
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background-color: var(--lz-surface-raised);
+  color: var(--lz-ink);
+  border-bottom-color: var(--lz-border-strong);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--lz-ink-muted);
+}
+
+/* Basket quantity changes: the number rolls, the price ticks, rows glide. */
+.laviz-cart-lines {
+  position: relative;
+}
+
+.cart-line-move {
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cart-line-enter-active {
+  transition: opacity 0.3s ease, transform 0.34s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.cart-line-leave-active {
+  position: absolute;
+  left: 0;
+  right: 0;
+  transition: opacity 0.22s ease, transform 0.26s ease;
+}
+
+.cart-line-enter {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.cart-line-leave-to {
+  opacity: 0;
+  transform: translateX(-32px);
+}
+
+.count-up-enter-active,
+.count-up-leave-active,
+.count-down-enter-active,
+.count-down-leave-active {
+  transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.count-up-leave-to,
+.count-down-enter {
+  opacity: 0;
+  transform: translateY(-55%);
+}
+
+.count-up-enter,
+.count-down-leave-to {
+  opacity: 0;
+  transform: translateY(55%);
+}
+
+.laviz-cart-line__price-num {
+  display: inline-block;
+  animation: price-tick 0.34s ease;
+}
+
+@keyframes price-tick {
+  0% { opacity: 0.3; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.laviz-cart-line__stepper:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-line-move,
+  .cart-line-enter-active,
+  .cart-line-leave-active,
+  .count-up-enter-active,
+  .count-up-leave-active,
+  .count-down-enter-active,
+  .count-down-leave-active { transition: none; }
+  .laviz-cart-line__price-num { animation: none; }
+}
+
+.laviz-total-tick {
+  display: inline-block;
+  animation: price-tick 0.34s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laviz-total-tick { animation: none; }
+}
+
+/* Dark theme: chosen options in "time and way of delivery" read in white. */
+html[data-theme='dark'] .laviz-day--active,
+html[data-theme='dark'] .laviz-day--active .laviz-day__note,
+html[data-theme='dark'] .laviz-time-slot--active,
+html[data-theme='dark'] .laviz-choice--active,
+html[data-theme='dark'] .laviz-choice--active *,
+html[data-theme='dark'] .laviz-date-option--active,
+html[data-theme='dark'] .time-sheet__slot--active {
+  color: #fff;
+}
+
+/* Pay button off until the delivery address is filled in. */
+.laviz-btn-pay:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.laviz-cart-modal__total .laviz-cart-modal__hint {
+  color: var(--laviz-primary);
+  font-weight: 600;
+  animation: rise-in 0.3s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laviz-cart-modal__total .laviz-cart-modal__hint { animation: none; }
+}
+
+/* Profile button: solid saffron with dark ink (saffron never carries white). */
+.laviz-icon-btn--saffron {
+  border-color: transparent;
+  background: var(--lz-saffron);
+  color: var(--lz-saffron-ink);
+}
+
+/* Bootstrap buttons that appear outside .laviz-app (confirmation sheets) use the
+   same crimson fill and white text as every other main button. */
+.modal .btn-primary,
+.modal .btn-primary:focus,
+.modal .btn-primary:active {
+  background: var(--lz-accent);
+  border-color: transparent;
+  color: var(--lz-on-accent);
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.modal .btn-outline-secondary {
+  background: transparent;
+  color: var(--lz-ink);
+  border-color: var(--lz-border-strong);
+}
+
+.modal .modal-footer .btn {
+  min-height: 44px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* =============================================================================
+   Notifications (toasts)
+   A card from the top of the screen, above every sheet: tinted by its kind, an
+   icon badge at the start, the message, and a close button. Success, error,
+   warning and info each have their own colour and icon.
+   ============================================================================= */
+.b-toaster {
+  z-index: 4000;
+}
+
+.b-toaster.b-toaster-top-right {
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  right: 0;
+  left: 0;
+}
+
+.b-toaster.b-toaster-top-right .b-toaster-slot {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+.b-toast {
+  max-width: none;
+  margin-bottom: 8px;
+}
+
+.b-toast .toast {
+  --toast-c: var(--lz-accent);
+  --toast-bg: var(--lz-accent-wash);
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: none;
+  min-height: 58px;
+  padding: 10px 14px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--toast-c) 38%, transparent);
+  border-radius: 16px;
+  background: var(--toast-bg);
+  color: var(--lz-ink);
+  font-size: 14px;
+  line-height: 1.75;
+  box-shadow: var(--lz-shadow-float);
+  animation: toast-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+}
+
+.b-toast-success .toast { --toast-c: var(--lz-success); --toast-bg: var(--lz-success-wash); }
+.b-toast-danger .toast { --toast-c: var(--lz-danger); --toast-bg: var(--lz-danger-wash); }
+.b-toast-warning .toast { --toast-c: var(--lz-saffron); --toast-bg: var(--lz-saffron-wash); }
+.b-toast-info .toast,
+.b-toast-default .toast { --toast-c: var(--lz-accent); --toast-bg: var(--lz-surface-raised); }
+
+.b-toast .toast-body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 0 30px; /* room for the close button on the far side */
+  font-weight: 600;
+}
+
+/* Icon badge (white glyph on the kind's colour). */
+.b-toast .toast-body::before {
+  content: "";
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--toast-c);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 11v6M12 7v.01'/%3E%3C/svg%3E");
+}
+
+.b-toast-success .toast-body::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+.b-toast-danger .toast-body::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6.5v7M12 17.5v.01'/%3E%3C/svg%3E");
+}
+
+/* Saffron carries dark ink, never white. */
+.b-toast-warning .toast-body::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233a2600' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6.5v7M12 17.5v.01'/%3E%3C/svg%3E");
+}
+
+.b-toast .toast-header {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.b-toast .toast-header .close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 !important;
+  border-radius: 50%;
+  color: var(--lz-ink-muted);
+  font-size: 22px;
+  line-height: 1;
+  text-shadow: none;
+  opacity: 1;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-18px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b-toast .toast { animation: none; }
+}
+
+/* Toast fixes: kind-coloured badge, plain close button. */
+.b-toast .toast { --toast-c: var(--lz-accent); }
+.b-toast-success .toast { --toast-c: var(--lz-success); }
+.b-toast-danger .toast { --toast-c: var(--lz-danger); }
+.b-toast-warning .toast { --toast-c: var(--lz-saffron); }
+.b-toast .toast .toast-header { background: transparent !important; box-shadow: none; }
+.b-toast .toast .toast-header .close { background: transparent !important; }
+.b-toast .toast .toast-body { display: flex; align-items: center; gap: 12px; }
+.b-toast .toast .toast-body::before { display: block; }
+
+/* Bill sheet: "تأیید و پرداخت" is pinned to the bottom of the sheet, flush with
+   the left, right and bottom edges, with no margin around it. */
+.modal .modal-dialog.laviz-bill-modal .modal-content { padding-bottom: 0; border-left: 0; border-right: 0; }
+
+.laviz-bill-modal__actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin: 1rem 0 0;
+  padding: 0;
+  background: var(--lz-accent);
+  box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.14);
+}
+
+.laviz-bill-modal__actions .laviz-btn-pay {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  /* The home indicator area stays inside the button, not below it. */
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  border: 0;
+  border-radius: 0;
+  background: var(--lz-accent);
+  box-shadow: none;
+  color: #fff;
+  font-size: 1.05rem;
+  /* A heavier face is its own font file: switch the face, not the weight. */
+  font-family: var(--lz-font-strong);
+  font-weight: normal;
+}
+
+/* Note under the delivery-type choices. */
+.laviz-choice-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--lz-ink-muted);
+}
+
+/* Menu rows alternate: every second row sits on a faint tinted band, which
+   runs to the edges of the section so it reads as a stripe, not a card. */
+.menu-section .order-item {
+  margin-bottom: 0;
+  margin-inline: calc(-1 * var(--lz-space-4));
+  padding-inline: var(--lz-space-4);
+}
+
+.menu-section .order-item:nth-of-type(even) {
+  background: var(--lz-row-alt);
+}
+
+/* Dragging the page with a mouse: show the grab hand and never select text. */
+html.page-dragging,
+html.page-dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+/* =============================================================================
+   Ambient background
+   A fixed layer behind the menu: a soft glow at the top, two huge radial
+   lights that drift very slowly, and a few small sparks that rise and fade
+   (the glowing gold of the printed menu). No blur filters and nothing that
+   triggers layout: only transform and opacity animate. Dark theme glows
+   saffron; light theme only gets a faint warm tint. Still (no motion) with
+   "reduce motion".
+   ============================================================================= */
+.laviz-storefront-shell { position: relative; isolation: isolate; }
+
+.laviz-ambient {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: min(100vw, 720px);
+  transform: translateX(-50%);
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.laviz-ambient__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 75% 34% at 50% 0, rgba(240, 179, 35, 0.13), transparent 70%),
+    radial-gradient(ellipse 80% 26% at 50% 100%, rgba(240, 179, 35, 0.07), transparent 70%);
+}
+
+.laviz-ambient__blob {
+  position: absolute;
+  width: 120vmin;
+  height: 120vmin;
+  max-width: 760px;
+  max-height: 760px;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.laviz-ambient__blob--a {
+  top: -30%;
+  right: -45%;
+  background: radial-gradient(circle, rgba(240, 179, 35, 0.12), transparent 62%);
+  animation: ambient-drift-a 34s ease-in-out infinite alternate;
+}
+
+.laviz-ambient__blob--b {
+  bottom: -35%;
+  left: -50%;
+  background: radial-gradient(circle, rgba(138, 19, 24, 0.07), transparent 62%);
+  animation: ambient-drift-b 42s ease-in-out infinite alternate;
+}
+
+.laviz-ambient__ember {
+  position: absolute;
+  bottom: -10px;
+  left: var(--ex);
+  width: var(--es);
+  height: var(--es);
+  border-radius: 50%;
+  background: #f0b323;
+  box-shadow: 0 0 8px 2px rgba(240, 179, 35, 0.55);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: ambient-rise var(--ed) linear var(--edl) infinite;
+}
+
+@keyframes ambient-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-12%, 14%, 0) scale(1.15); }
+}
+
+@keyframes ambient-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to { transform: translate3d(14%, -12%, 0) scale(0.95); }
+}
+
+@keyframes ambient-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  12% { opacity: 0.85; }
+  70% { opacity: 0.5; }
+  100% { transform: translate3d(var(--esw), -108vh, 0); opacity: 0; }
+}
+
+/* Light theme: a warm tint only, no sparks. */
+html:not([data-theme='dark']) .laviz-ambient__glow {
+  background:
+    radial-gradient(ellipse 75% 30% at 50% 0, rgba(240, 179, 35, 0.10), transparent 70%),
+    radial-gradient(ellipse 80% 24% at 50% 100%, rgba(138, 19, 24, 0.04), transparent 70%);
+}
+
+html:not([data-theme='dark']) .laviz-ambient__ember { display: none; }
+
+/* Dark theme stays neutral: no crimson light, a little more saffron. */
+html[data-theme='dark'] .laviz-ambient__blob--b {
+  background: radial-gradient(circle, rgba(240, 179, 35, 0.05), transparent 62%);
+}
+
+/* The bands let the layer show through; text sits on the same surface colour. */
+.laviz-storefront-shell .menu-section,
+.laviz-storefront-shell .offers { background: transparent; }
+
+.laviz-storefront-shell .menu-section .order-item:nth-of-type(even) {
+  background: color-mix(in srgb, var(--lz-row-alt) 72%, transparent);
+}
+
+/* The printed menu's glowing title, for the dark theme. */
+html[data-theme='dark'] .section-heading {
+  text-shadow: 0 0 16px rgba(240, 179, 35, 0.38);
+}
+
+html[data-theme='dark'] .section-heading::before {
+  background:
+    radial-gradient(circle at 3.5px 50%, var(--lz-saffron) 0 3px, transparent 3.5px),
+    linear-gradient(to left, transparent, var(--lz-saffron)) 0 50% / 100% 1px no-repeat;
+  filter: drop-shadow(0 0 3px rgba(240, 179, 35, 0.55));
+}
+
+html[data-theme='dark'] .section-heading::after {
+  background:
+    radial-gradient(circle at calc(100% - 3.5px) 50%, var(--lz-saffron) 0 3px, transparent 3.5px),
+    linear-gradient(to right, transparent, var(--lz-saffron)) 0 50% / 100% 1px no-repeat;
+  filter: drop-shadow(0 0 3px rgba(240, 179, 35, 0.55));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laviz-ambient__blob,
+  .laviz-ambient__ember { animation: none; }
+  .laviz-ambient__ember { display: none; }
+}
+
+/* Dark theme: the base map has no dark style, so its picture is inverted and
+   toned down (markers, buttons and popups are separate layers, unaffected). */
+html[data-theme='dark'] .leaflet-container .maplibregl-canvas,
+html[data-theme='dark'] .leaflet-container .leaflet-tile-pane img.leaflet-tile {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.92) saturate(0.85);
+}
+
+/* The base map's credit stays small. */
+.leaflet-control-attribution { font-size: 10px; }
+

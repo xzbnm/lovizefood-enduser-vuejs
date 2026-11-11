@@ -1,7 +1,7 @@
 <template>
   <div class="delivery-bar">
     <!-- Segmented control: courier vs. pickup, mirroring the reference. -->
-    <div class="delivery-bar__switch" role="radiogroup" aria-label="نحوه دریافت سفارش">
+    <div v-if="showSwitch" class="delivery-bar__switch" role="radiogroup" aria-label="نحوه دریافت سفارش">
       <button
         v-for="opt in options"
         :key="opt.value"
@@ -23,7 +23,7 @@
         <span class="delivery-bar__chip-icon" aria-hidden="true">🕒</span>
         {{ etaLabel }}
       </span>
-      <span v-if="value === 'sendToMe'" class="delivery-bar__chip">
+      <span v-if="showSwitch && value === 'sendToMe'" class="delivery-bar__chip">
         <span class="delivery-bar__chip-icon" aria-hidden="true">🛵</span>
         {{ shippingText }}
       </span>
@@ -37,6 +37,8 @@ export default {
   props: {
     value: { type: String, default: 'sendToMe' },
     options: { type: Array, default: () => [] },
+    // The same choice is offered again inside the basket, so the first page can hide it.
+    showSwitch: { type: Boolean, default: true },
     shippingCost: { type: [Number, String], default: 0 },
     // Minutes; 0/null hides the chip rather than promising a made-up time.
     etaMinutes: { type: [Number, String], default: 0 },

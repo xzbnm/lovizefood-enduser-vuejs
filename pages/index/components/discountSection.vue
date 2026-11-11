@@ -5,22 +5,29 @@
   <section v-if="offers.length" class="offers">
     <h2 class="offers__title">تخفیف‌ها و کوپن‌ها</h2>
 
-    <div class="offers__list">
+    <div v-drag-scroll class="offers__list">
+      <!-- Ticket-style card: the amount on top, title and time left, a
+           perforated divider with side notches, then the details link. -->
       <button
         v-for="offer in offers"
         :key="offer.id"
         type="button"
         class="offer-card"
-        :class="{ 'offer-card--personal': offer.personal }"
+        :class="offer.personal ? 'offer-card--personal' : 'offer-card--public'"
         @click="open(offer)"
       >
-        <span class="offer-card__head">
-          <span class="offer-card__badge">{{ offer.badge }}</span>
-          <span class="offer-card__icon" aria-hidden="true">{{ offer.personal ? '🎁' : '٪' }}</span>
+        <span class="offer-card__top">
+          <span class="offer-card__pill">{{ offer.pill }}</span>
+          <span class="offer-card__title">{{ offer.title }}</span>
+          <span class="offer-card__hint">{{ offer.hint }}</span>
         </span>
-        <span class="offer-card__title">{{ offer.title }}</span>
-        <span class="offer-card__hint">{{ offer.hint }}</span>
-        <span class="offer-card__more">جزئیات ›</span>
+        <span class="offer-card__divider" aria-hidden="true"></span>
+        <span class="offer-card__more">
+          جزئیات
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
       </button>
     </div>
 
@@ -63,8 +70,11 @@
 </template>
 
 <script>
+import dragScroll from '../../../utils/dragScroll';
+
 export default {
   name: 'DiscountSection',
+  directives: { dragScroll },
   props: {
     /** Codes issued to this customer, from /profile/active-discount-codes. */
     personalCodes: { type: Array, default: () => [] },
@@ -79,10 +89,12 @@ export default {
       const personal = this.personalCodes.map((c) => ({
         id: 'p-' + c.id,
         personal: true,
-        badge: 'ویژه شما',
+        pill: this.percentOf(c) ? `${this.fa(this.percentOf(c))}٪ تخفیف` : `تا ${this.fa(c.amount)} تومان`,
         title: c.title || 'کد تخفیف شما',
         hint: this.remaining(c),
-        headline: `تا ${this.fa(c.amount)} تومان تخفیف`,
+        headline: this.percentOf(c)
+          ? `${this.fa(this.percentOf(c))}٪ تخفیف`
+          : `تا ${this.fa(c.amount)} تومان تخفیف`,
         sub: this.remaining(c),
         scope: 'این کد فقط برای شما صادر شده است',
         code: c.code,
@@ -91,7 +103,7 @@ export default {
       const shop = this.publicOffers.map((o) => ({
         id: 'g-' + (o.id || o.code),
         personal: false,
-        badge: 'همه مشتریان',
+        pill: this.percentOf(o) ? `${this.fa(this.percentOf(o))}٪ تخفیف` : (o.headline || 'تخفیف ویژه'),
         title: o.title || 'تخفیف ویژه',
         hint: o.hint || 'روی سبد خرید اعمال می‌شود',
         headline: o.headline || o.title,
@@ -106,6 +118,12 @@ export default {
   methods: {
     fa(n) {
       return Number(n || 0).toLocaleString('fa-IR');
+    },
+    // The API names the percentage differently across endpoints; accept the
+    // usual spellings and ignore anything that is not a sensible 1-100.
+    percentOf(o) {
+      const v = Number(o && (o.percent ?? o.discount_percent ?? o.percentage));
+      return v > 0 && v <= 100 ? v : 0;
     },
     remaining(c) {
       if (c.remainingDays === null || c.remainingDays === undefined) return 'بدون محدودیت زمانی';
@@ -174,71 +192,127 @@ export default {
   gap: var(--lz-space-2);
   overflow-x: auto;
   scrollbar-width: none;
-  padding-bottom: var(--lz-space-1);
+  /* A scroll container clips what spills out of it, card shadows included.
+     The padding gives the shadows room; the negative margins give the space
+     back, so the layout does not change. The row also runs to the screen
+     edges, so cards slide out instead of being cut at the section padding. */
+  padding: 8px var(--lz-space-4) 32px;
+  margin: -8px calc(-1 * var(--lz-space-4)) -24px;
 }
 
 .offers__list::-webkit-scrollbar { display: none; }
 
 .offer-card {
+  --offer-edge: var(--lz-border-hairline);
   flex: 0 0 auto;
   width: 170px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: var(--lz-space-3);
-  border: 1px solid var(--lz-border-hairline);
-  border-radius: var(--lz-radius-control);
-  background: var(--lz-surface);
-  box-shadow: var(--lz-shadow-chip);
+  padding: 0;
+  border: 1px solid var(--offer-edge);
+  border-radius: 20px;
+  background: var(--lz-surface-raised);
+  box-shadow: 0 8px 22px rgba(30, 24, 25, 0.1);
   font-family: inherit;
-  text-align: right;
+  text-align: center;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.offer-card--personal {
-  border-color: var(--lz-accent);
-  background: var(--lz-accent-wash);
-}
+.offer-card:active { transform: scale(0.97); }
+.offer-card:focus-visible { outline: 2px solid var(--lz-accent); outline-offset: 2px; }
 
-.offer-card__head {
+.offer-card__top {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  gap: 10px;
+  padding: 16px 14px 10px;
 }
 
-.offer-card__badge {
-  font-size: var(--lz-text-caption);
-  font-weight: var(--lz-weight-semibold);
-  color: var(--lz-accent-strong);
+/* The amount is the hero of the card. */
+.offer-card__pill {
+  padding: 3px 14px;
+  border-radius: 999px;
+  /* Crimson in both themes so the white text always reads. */
+  background: linear-gradient(135deg, #8a1318, #b02a30);
+  color: #fff;
+  font-size: var(--lz-text-sm);
+  font-weight: 600;
+  line-height: 1.8;
+  box-shadow: 0 4px 10px rgba(138, 19, 24, 0.28);
 }
 
-.offer-card__icon { font-size: var(--lz-text-body); }
+.offer-card--public .offer-card__pill {
+  background: var(--lz-saffron);
+  color: var(--lz-saffron-ink);
+  box-shadow: 0 4px 10px rgba(240, 179, 35, 0.35);
+}
 
 .offer-card__title {
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   font-size: var(--lz-text-body);
-  font-weight: var(--lz-weight-semibold);
+  font-weight: 600;
+  line-height: 1.5;
   color: var(--lz-ink);
 }
 
 .offer-card__hint {
+  margin-top: -6px;
   font-size: var(--lz-text-caption);
   color: var(--lz-ink-muted);
 }
 
+/* Perforated divider with a notch cut into each side, like a ticket. The
+   notches take the colour of the band behind the cards. */
+.offer-card__divider {
+  position: relative;
+  display: block;
+  height: 16px;
+  margin-top: auto;
+}
+
+.offer-card__divider::before {
+  content: "";
+  position: absolute;
+  inset-inline: 14px;
+  top: 50%;
+  border-top: 2px dashed var(--lz-border-strong);
+}
+
+.offer-card__divider::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline: -1px;
+  background:
+    radial-gradient(circle at 0 50%, var(--lz-surface) 0 7px, var(--offer-edge) 7px 8px, transparent 8px) left / 50% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, var(--lz-surface) 0 7px, var(--offer-edge) 7px 8px, transparent 8px) right / 50% 100% no-repeat;
+}
+
 .offer-card__more {
-  margin-top: var(--lz-space-1);
-  font-size: var(--lz-text-caption);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 14px 12px;
+  font-size: var(--lz-text-sm);
+  font-weight: 600;
   color: var(--lz-accent-strong);
 }
+
+.offer-card--public .offer-card__more { color: var(--lz-ink); }
 
 /* ---- bottom sheet ---- */
 .offer-sheet {
   position: fixed;
   inset: 0;
   z-index: 1035;
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--lz-modal-backdrop);
   display: flex;
   align-items: flex-end;
 }
@@ -247,7 +321,10 @@ export default {
   width: 100%;
   max-height: 80vh;
   overflow-y: auto;
-  background: var(--lz-surface);
+  background: var(--lz-surface-raised);
+  border: 1px solid var(--lz-sheet-border);
+  border-bottom: 0;
+  box-shadow: var(--lz-shadow-sheet);
   border-radius: var(--lz-radius-card) var(--lz-radius-card) 0 0;
   padding: var(--lz-space-2) var(--lz-space-4) calc(var(--lz-space-4) + env(safe-area-inset-bottom));
 }

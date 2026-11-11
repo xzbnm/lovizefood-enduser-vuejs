@@ -8,7 +8,7 @@
 
    Current design: "Shop" — floating cards on a near-white canvas, pillow-soft
    radii, hairline borders, dual-layer soft shadows, one saturated accent.
-   The accent is the Laviz pink rather than Shop's violet, on request.
+   The accent is Laviz crimson (from the logo) with saffron as the highlight.
 
    Rules that keep a swap to one file:
      • never write a hex value outside this file
@@ -21,28 +21,50 @@
   /* ---- Accent ------------------------------------------------------------
      The system's only saturated colour. It carries identity and action:
      primary buttons, the active tab underline, badges, the add control. */
-  --lz-accent: #e20074;
-  --lz-accent-strong: #bc0060;   /* pressed / text on tinted surfaces */
-  --lz-accent-deep: #9a004d;
-  --lz-accent-wash: #ffedf6;     /* tinted surface behind accent content */
-  --lz-accent-halo: rgba(226, 0, 116, 0.34); /* tint for the accent's shadow */
+  --lz-accent: #8a1318;          /* Laviz crimson, measured from the new logo */
+  --lz-accent-strong: #6b0e13;   /* pressed / text on tinted surfaces */
+  --lz-accent-deep: #560b0f;
+  --lz-accent-wash: #f8e8e9;     /* tinted surface behind accent content */
+  --lz-accent-halo: rgba(138, 19, 24, 0.34); /* tint for the accent's shadow */
+
+  /* ---- Highlight ---------------------------------------------------------
+     Saffron: badges, stars, "today". Only ever with dark text (white on it is
+     1.9:1), never for primary actions. */
+  --lz-saffron: #f0b323;
+  --lz-saffron-ink: #3a2600;
+  --lz-saffron-wash: #fff4d6;
 
   /* ---- Canvas & surfaces -------------------------------------------------
-     Shop separates layers with shadow on white, not with borders. */
-  --lz-canvas: #f2f4f5;
+     Warm neutrals so white cards read against the crimson, not against grey. */
+  --lz-canvas: #f8f4f1;
   --lz-surface: #ffffff;
-  --lz-surface-soft: #eeeef0;
-  --lz-surface-light: #f6f6f6;
+  --lz-surface-soft: #f1ebe7;
+  --lz-row-alt: #faf6f3; /* every second menu row */
+  --lz-surface-light: #f8f5f3;
+
+  /* Page chrome: header wash and the area outside the 720px column on desktop. */
+  --lz-header-start: #fdf2ee;
+  --lz-header-end: #f8efe9;
+  --lz-outer: #ece6e2;
+  --lz-modal-backdrop: rgba(30, 24, 25, 0.45);
+
+  /* Sheets and dialogs sit on their own, slightly lifted surface with a visible edge. */
+  --lz-surface-raised: #ffffff;
+  --lz-sheet-border: rgba(30, 24, 25, 0.08);
+  --lz-border-strong: #d3c6c1;
+  --lz-backdrop-opacity: 0.5;
+  --lz-shadow-sheet: 0 -8px 32px rgba(30, 24, 25, 0.18);
 
   /* ---- Ink --------------------------------------------------------------- */
-  --lz-ink: #030306;
-  --lz-ink-muted: #575863;
-  --lz-ink-faint: #a6a8b0;
+  --lz-ink: #1e1819;
+  --lz-ink-muted: #6a5c5e;
+  --lz-ink-faint: #a99c9e;
   --lz-ink-inverse: #ffffff;
+  --lz-on-accent: #ffffff;   /* text on a solid accent fill: white in both themes */
 
   /* ---- Lines ------------------------------------------------------------- */
-  --lz-border: #d5d8df;
-  --lz-border-hairline: #ebebeb;
+  --lz-border: #e3d9d5;
+  --lz-border-hairline: #efe7e3;
 
   /* ---- Feedback ---------------------------------------------------------- */
   --lz-success: #00843d;
@@ -51,7 +73,7 @@
   --lz-danger-wash: #fff0ee;
   --lz-warning: #d47a0b;
   --lz-warning-wash: #fff1e8;
-  --lz-star: #ffc700;
+  --lz-star: #f0b323;
 
   /* ---- Radii -------------------------------------------------------------
      The generous rounding is the signature of this design. */
@@ -72,9 +94,10 @@
 
   /* ---- Type --------------------------------------------------------------
      Hierarchy comes from size and negative tracking, not heavy weights.
-     Persian faces are listed first: iranSansX matches the reference, and
-     the bundled YekanBakh is the fallback that actually ships. */
-  --lz-font: iranSansX, YekanBakh, Vazirmatn, Tahoma, ui-sans-serif, system-ui, sans-serif;
+     IRANSansX ships with the app (assets/fonts/iran-sans-x); the rest are
+     only fallbacks. */
+  --lz-font: IRANSansX, Vazirmatn, Tahoma, ui-sans-serif, system-ui, sans-serif;
+  --lz-font-strong: IRANSansXMedium, IRANSansX, Vazirmatn, Tahoma, ui-sans-serif, system-ui, sans-serif;
 
   --lz-text-caption: 11px;
   --lz-text-sm: 12px;
@@ -123,8 +146,9 @@
   --laviz-primary-dark: var(--lz-accent-deep);
   --laviz-primary-light: var(--lz-accent-wash);
   --laviz-accent: var(--lz-accent);
-  --laviz-add-bg: var(--lz-accent-wash);
-  --laviz-add-ink: var(--lz-accent-strong);
+  /* Add buttons and steppers are solid crimson with white text, like every other main button. */
+  --laviz-add-bg: var(--lz-accent);
+  --laviz-add-ink: #ffffff;
 
   --laviz-bg: var(--lz-surface);
   --laviz-surface: var(--lz-surface);
@@ -157,4 +181,74 @@ html[data-laviz-mode='ramadan'] {
   --lz-accent-deep: #0f4d35;
   --lz-accent-wash: #e3f2ea;
   --lz-accent-halo: rgba(27, 122, 84, 0.34);
+}
+
+/* =============================================================================
+   DARK THEME
+   Chosen with the toggle in the header (saved per device); the system setting
+   decides until a choice is made. data-theme is always set on <html> by an
+   inline script in app.html before the first paint, so there is no flash.
+   Surfaces are neutral charcoal-blacks with no colour cast, so the crimson and
+   saffron are the only colour; the accent is lifted so crimson reads on dark
+   (white text on it is still 5:1).
+   ============================================================================= */
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --lz-accent: #c4363c;
+  --lz-accent-strong: #f2878c;
+  --lz-accent-deep: #ff9ea2;
+  --lz-accent-wash: #33191b;
+  --lz-accent-halo: rgba(196, 54, 60, 0.42);
+
+  --lz-saffron: #f0b323;
+  --lz-saffron-ink: #2b1c00;
+  --lz-saffron-wash: #3a2d0c;
+
+  --lz-canvas: #0e0f10;
+  --lz-surface: #17181a;
+  --lz-surface-soft: #232528;
+  --lz-row-alt: #1d1e20;
+  --lz-surface-light: #1d1e21;
+
+  --lz-header-start: #1f2022;
+  --lz-header-end: #141517;
+  --lz-outer: #060607;
+  --lz-modal-backdrop: rgba(0, 0, 0, 0.78);
+
+  /* Dark: the sheet is clearly lighter than the dimmed page, with a light edge
+     along its top and sides so its border can be felt. */
+  --lz-surface-raised: #27292c;
+  --lz-sheet-border: rgba(255, 255, 255, 0.2);
+  --lz-border-strong: #62666c;
+  --lz-backdrop-opacity: 0.82;
+  --lz-shadow-sheet: 0 -14px 44px rgba(0, 0, 0, 0.75), 0 -1px 0 rgba(255, 255, 255, 0.14);
+
+  --lz-ink: #f2f2f3;
+  --lz-ink-muted: #b3b6bb;
+  --lz-ink-faint: #81858c;
+  --lz-ink-inverse: #17181a;
+
+  --lz-border: #36393d;
+  --lz-border-hairline: #292b2e;
+
+  --lz-success: #5fc58a;
+  --lz-success-wash: #16301f;
+  --lz-danger: #ff7a72;
+  --lz-danger-wash: #3b1a18;
+  --lz-warning: #f0a04a;
+  --lz-warning-wash: #3a2610;
+
+  --lz-shadow-chip: rgba(0, 0, 0, 0.4) 0 2px 8px 0;
+  --lz-shadow-card: rgba(0, 0, 0, 0.5) 0 4px 6px -1px, rgba(0, 0, 0, 0.4) 0 2px 4px -2px;
+  --lz-shadow-float: rgba(0, 0, 0, 0.55) 0 4px 24px 0;
+  --lz-shadow-bar: rgba(0, 0, 0, 0.6) 0 -4px 24px 0;
+}
+
+html[data-theme='dark'][data-laviz-mode='ramadan'] {
+  --lz-accent: #2e9a6d;
+  --lz-accent-strong: #7fd6ac;
+  --lz-accent-deep: #a6e6c6;
+  --lz-accent-wash: #12291f;
+  --lz-accent-halo: rgba(46, 154, 109, 0.4);
 }

@@ -2,6 +2,22 @@
 <html lang="en" {{ HTML_ATTRS }}>
 <head {{ HEAD_ATTRS }}>
   {{ HEAD }}
+  <script>
+    // Apply the saved theme (or the system one) before the first paint so a
+    // dark-theme visitor never sees a white flash. See toggleTheme() in pages/index.vue.
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem('laviz_theme'); } catch (e) {}
+      if (!theme) {
+        var m = document.cookie.match(/(?:^|; )laviz_theme=(light|dark)/);
+        theme = m ? m[1] : null;
+      }
+      if (theme !== 'light' && theme !== 'dark') {
+        theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BX4K10D06H"></script>
   <script>

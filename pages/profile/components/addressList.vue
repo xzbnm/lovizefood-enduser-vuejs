@@ -66,7 +66,7 @@ export default {
 
 .address-list__empty {
   text-align: center;
-  color: #8a7f6d;
+  color: var(--lz-ink-muted);
   font-size: 0.85rem;
   padding: 1.5rem 0;
   margin: 0;
@@ -82,7 +82,7 @@ export default {
   border: 1px solid rgba(42, 35, 24, 0.1);
   border-radius: 10px;
   padding: 1rem;
-  background: #fafaf8;
+  background: var(--lz-surface-light);
   transition: border-color 0.15s;
 }
 
@@ -105,14 +105,14 @@ export default {
 .address-card__title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #2a2318;
+  color: var(--lz-ink);
   margin: 0;
 }
 
 .address-card__badge {
   font-size: 0.7rem;
   font-weight: 700;
-  background: #c44536;
+  background: var(--lz-accent);
   color: #fff;
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
@@ -124,7 +124,7 @@ export default {
 
 .address-card__text {
   font-size: 0.85rem;
-  color: #2a2318;
+  color: var(--lz-ink);
   margin: 0 0 0.4rem;
   line-height: 1.5;
 }
@@ -133,13 +133,13 @@ export default {
   display: flex;
   gap: 0.8rem;
   font-size: 0.75rem;
-  color: #8a7f6d;
+  color: var(--lz-ink-muted);
   margin: 0.4rem 0;
 }
 
 .address-card__coords {
   font-size: 0.72rem;
-  color: #b8b3a8;
+  color: var(--lz-ink-faint);
   margin: 0.4rem 0 0;
   font-family: monospace;
 }
@@ -156,7 +156,7 @@ export default {
   padding: 0.6rem 0.8rem;
   font-size: 0.8rem;
   font-weight: 700;
-  background: #c44536;
+  background: var(--lz-accent);
   color: #fff;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -168,7 +168,7 @@ export default {
 
 .address-action-btn--delete {
   background: transparent;
-  border: 1px solid #c44536;
-  color: #c44536;
+  border: 1px solid var(--lz-accent);
+  color: var(--lz-accent);
 }
 </style>

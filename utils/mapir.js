@@ -1,6 +1,7 @@
+// Search and address lookup only; the map picture itself comes from
+// utils/basemap.js and needs no key. With a map.ir key set, map.ir answers
+// search and lookup (better Persian data); without one, Nominatim does.
 const MAPIR_BASE = 'https://map.ir';
-const MAPIR_WMS_URL = `${MAPIR_BASE}/shiveh/wms`;
-const MAPIR_WMS_LAYER = 'Shiveh:Shiveh';
 
 export const DEFAULT_MAP_CENTER = {
   lat: 33.733,
@@ -18,55 +19,9 @@ export function mapirHeaders() {
   return key ? { 'x-api-key': key } : {};
 }
 
-export function createMapirTileLayer(L, apiKey) {
-  if (!apiKey) {
-    return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap',
-    });
-  }
-
-  const MapirWmsLayer = L.TileLayer.WMS.extend({
-    createTile(coords, done) {
-      const tile = document.createElement('img');
-      tile.alt = '';
-      tile.setAttribute('role', 'presentation');
-
-      const url = this.getTileUrl(coords);
-
-      fetch(url, { headers: { 'x-api-key': apiKey } })
-        .then((res) => {
-          if (!res.ok) throw new Error(`tile ${res.status}`);
-          const type = res.headers.get('content-type') || '';
-          if (!type.includes('image')) throw new Error('not-image');
-          return res.blob();
-        })
-        .then((blob) => {
-          tile.onload = () => URL.revokeObjectURL(tile.src);
-          tile.src = URL.createObjectURL(blob);
-          done(null, tile);
-        })
-        .catch(() => {
-          tile.src = '';
-          done(null, tile);
-        });
-
-      return tile;
-    },
-  });
-
-  return new MapirWmsLayer(MAPIR_WMS_URL, {
-    layers: MAPIR_WMS_LAYER,
-    format: 'image/png',
-    transparent: true,
-    maxZoom: 18,
-    attribution: '© <a href="https://map.ir" target="_blank" rel="noopener">map.ir</a>',
-  });
-}
-
 export async function mapirReverse(lat, lng) {
   const key = getMapirApiKey();
-  if (!key) return null;
+  if (!key) return nominatimReverse(lat, lng);
 
   const url = `${MAPIR_BASE}/reverse/?lat=${lat}&lon=${lng}`;
   const res = await fetch(url, { headers: { 'x-api-key': key } });
@@ -77,7 +32,8 @@ export async function mapirReverse(lat, lng) {
 
 export async function mapirSearch(text, lat, lng) {
   const key = getMapirApiKey();
-  if (!key || !text || text.trim().length < 2) return [];
+  if (!text || text.trim().length < 2) return [];
+  if (!key) return nominatimSearch(text.trim(), lat, lng);
 
   const params = new URLSearchParams({ text: text.trim() });
   if (lat != null && lng != null) {
@@ -114,4 +70,62 @@ export function formatSearchLabel(item) {
   return item.title && item.address && item.title !== item.address
     ? `${item.title} — ${item.address}`
     : (item.address || item.title);
+}
+
+
+// ---- Address search and lookup without an account -------------------------
+// With no map.ir key the app uses Nominatim (OpenStreetMap's own geocoder):
+// free, no key. Its policy allows light use only (about one request a second,
+// no bulk), which suits a customer typing an address. Requests are therefore
+// spaced out here.
+const NOMINATIM = 'https://nominatim.openstreetmap.org';
+let nominatimQueue = Promise.resolve();
+
+function nominatimGet(path) {
+  const run = nominatimQueue.then(async () => {
+    const res = await fetch(`${NOMINATIM}${path}`, { headers: { 'Accept-Language': 'fa' } });
+    if (!res.ok) throw new Error(`nominatim ${res.status}`);
+    return res.json();
+  });
+  // The next request waits at least 1.1 s after this one starts, win or lose.
+  nominatimQueue = new Promise((resolve) => setTimeout(resolve, 1100)).then(() => run.catch(() => {}));
+  return run;
+}
+
+// "خیابان بصیرت، محله ...، قائن" from Nominatim's address parts.
+function shortAddress(item) {
+  const a = item.address || {};
+  const parts = [
+    a.road || a.pedestrian || a.footway,
+    a.neighbourhood || a.suburb || a.quarter,
+    a.city || a.town || a.village || a.county,
+  ].filter(Boolean);
+  return parts.length ? parts.join('، ') : (item.display_name || '');
+}
+
+export async function nominatimReverse(lat, lng) {
+  const q = new URLSearchParams({
+    format: 'jsonv2', lat: String(lat), lon: String(lng), zoom: '18', addressdetails: '1', 'accept-language': 'fa',
+  });
+  const data = await nominatimGet(`/reverse?${q.toString()}`);
+  if (!data || data.error) return null;
+  return shortAddress(data) || null;
+}
+
+export async function nominatimSearch(text, lat, lng) {
+  const q = new URLSearchParams({
+    format: 'jsonv2', q: text, limit: '8', addressdetails: '1', 'accept-language': 'fa', countrycodes: 'ir',
+  });
+  if (lat != null && lng != null) {
+    // A box around the restaurant ranks nearby places first (not a hard limit).
+    const d = 0.5;
+    q.set('viewbox', `${Number(lng) - d},${Number(lat) + d},${Number(lng) + d},${Number(lat) - d}`);
+  }
+  const data = await nominatimGet(`/search?${q.toString()}`);
+  return (Array.isArray(data) ? data : []).map((item) => ({
+    title: item.name || (item.display_name || '').split('،')[0].split(',')[0],
+    address: shortAddress(item),
+    lat: Number(item.lat),
+    lng: Number(item.lon),
+  })).filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lng));
 }

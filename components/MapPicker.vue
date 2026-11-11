@@ -29,7 +29,7 @@
         📍 محل تحویل حضوری — {{ restaurantAddress || 'موقعیت رستوران روی نقشه' }}
       </template>
       <template v-else>
-        🏪 پین نارنجی = {{ restaurantName }} — 📍 برای آدرس تحویل روی نقشه کلیک کنید یا جستجو کنید.
+        🏪 پین مشکی = {{ restaurantName }} — 📍 برای آدرس تحویل روی نقشه کلیک کنید یا جستجو کنید.
       </template>
     </div>
 
@@ -44,7 +44,20 @@
       <button v-if="!readonly" type="button" class="btn btn-outline-primary btn-sm" @click="useMyLocation">
         موقعیت من
       </button>
-      <button type="button" class="btn btn-outline-secondary btn-sm" @click="focusRestaurant">
+      <!-- Pick-up map: the button centres the map on the restaurant (what it
+           always did) and also hands the trip to the phone's navigation apps. -->
+      <button
+        v-if="readonly"
+        type="button"
+        class="map-picker__navigate"
+        @click="navigateToRestaurant"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M20 4L4 11l7 2 2 7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        مسیریابی به رستوران
+      </button>
+      <button v-else type="button" class="btn btn-outline-secondary btn-sm" @click="focusRestaurant">
         نمایش رستوران
       </button>
       <small v-if="resolvedAddress" class="map-picker__address text-muted mr-2">
@@ -59,12 +72,11 @@
 
 <script>
 import L from 'leaflet';
+import { addBasemap } from '~/utils/basemap';
 import 'leaflet/dist/leaflet.css';
 import {
-  createMapirTileLayer,
   DEFAULT_MAP_CENTER,
   formatSearchLabel,
-  getMapirApiKey,
   mapirReverse,
   mapirSearch,
 } from '~/utils/mapir';
@@ -127,7 +139,7 @@ export default {
   },
   mounted() {
     if (process.server) return;
-    this.mapirEnabled = !!getMapirApiKey();
+    this.mapirEnabled = true; // map.ir with a key, otherwise Nominatim
     this.localLat = this.lat;
     this.localLng = this.lng;
     this.$nextTick(() => this.ensureMap());
@@ -144,9 +156,9 @@ export default {
     restaurantPinHtml() {
       return (
         '<div style="display:flex;flex-direction:column;align-items:center;transform:translateY(-4px);">' +
-        '<div style="background:#c17f24;color:#fff;font-size:18px;line-height:1;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.35);border:2px solid #fff;">' +
+        '<div style="background:#1e1819;color:#fff;font-size:18px;line-height:1;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.35);border:2px solid #fff;">' +
         '<span style="transform:rotate(45deg);">🏪</span></div>' +
-        '<div style="margin-top:4px;background:#fff;border:1px solid #c17f24;color:#9a6318;font:700 11px Tahoma;padding:2px 6px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.15);">رستوران</div>' +
+        '<div style="margin-top:4px;background:#fff;border:1px solid #f0b323;color:#3a2600;background:#f0b323;font:700 11px Tahoma;padding:2px 6px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.15);">رستوران</div>' +
         '</div>'
       );
     },
@@ -183,6 +195,10 @@ export default {
         this.restaurantMarker.setLatLng([lat, lng]);
         this.bindRestaurantPopup();
       }
+    },
+    navigateToRestaurant() {
+      this.focusRestaurant();
+      this.$emit('navigate');
     },
     focusRestaurant() {
       if (!this.map) {
@@ -247,7 +263,7 @@ export default {
         zoomControl: true,
       }).setView([viewLat, viewLng], this.zoom);
 
-      createMapirTileLayer(L, getMapirApiKey()).addTo(this.map);
+      addBasemap(L, this.map);
 
       this.syncRestaurantMarker();
 
@@ -401,7 +417,7 @@ export default {
   border: 1px solid rgba(42, 35, 24, 0.1);
   z-index: 1;
   overflow: hidden;
-  background: #f0ebe3;
+  background: var(--lz-surface-soft);
 }
 
 .map-picker__loading {
@@ -414,7 +430,7 @@ export default {
   gap: 0.5rem;
   background: rgba(247, 243, 235, 0.92);
   font-size: 0.85rem;
-  color: #7a6e62;
+  color: var(--lz-ink-muted);
 }
 
 .map-picker__search {
@@ -431,7 +447,7 @@ export default {
   list-style: none;
   margin: 0.25rem 0 0;
   padding: 0;
-  background: #fff;
+  background: var(--lz-surface);
   border: 1px solid rgba(42, 35, 24, 0.12);
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(42, 35, 24, 0.12);
@@ -447,7 +463,7 @@ export default {
 }
 
 .map-picker__suggestions li:hover {
-  background: #f7f3eb;
+  background: var(--lz-surface-light);
 }
 
 .map-picker__suggestions li:last-child {
@@ -482,4 +498,23 @@ export default {
   filter: drop-shadow(0 2px 4px rgba(42, 35, 24, 0.35));
   pointer-events: none;
 }
+
+.map-picker__navigate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--lz-accent);
+  color: var(--lz-on-accent, #fff);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.map-picker__navigate:active { transform: scale(0.98); }
+.map-picker__navigate:focus-visible { outline: 2px solid var(--lz-saffron); outline-offset: 2px; }
 </style>
